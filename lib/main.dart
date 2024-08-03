@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
 }
 
 class EmailSender extends StatelessWidget {
-  final String senderEmail = 'rolandomontero@mclautaro.cl';
+  final String senderEmail = 'app@histologyplus.mclautaro.cl';
   final String senderPassword = 'Rmx21071972#';
   final String recipientEmail = 'rolandomontero@hotmail.com';
   final String verificationCode = 'MHG1243';
@@ -31,22 +32,28 @@ class EmailSender extends StatelessWidget {
   const EmailSender({super.key}); // Puedes generar un código dinámicamente
 
   Future<void> sendEmail() async {
-    final smtpServer = SmtpServer('mail.mclautaro.cl',
+    final smtpServer = SmtpServer('histologyplus.mclautaro.cl',
         username: senderEmail, password: senderPassword);
 
     final message = Message()
-      ..from = Address(senderEmail, 'Rolando Montero')
+      ..from = Address(senderEmail, 'App')
       ..recipients.add(recipientEmail)
       ..subject = 'Código de Verificación'
       ..text = 'Su código de verificación es: $verificationCode';
 
     try {
       final sendReport = await send(message, smtpServer);
-      print('Mensaje enviado: ' + sendReport.toString());
+      if (kDebugMode) {
+        print('Mensaje enviado: $sendReport');
+      }
     } on MailerException catch (e) {
-      print('Error al enviar el mensaje: $e');
+      if (kDebugMode) {
+        print('Error al enviar el mensaje: $e');
+      }
       for (var p in e.problems) {
-        print('Problema: ${p.code}: ${p.msg}');
+        if (kDebugMode) {
+          print('Problema: ${p.code}: ${p.msg}');
+        }
       }
     }
   }
